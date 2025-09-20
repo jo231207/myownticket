@@ -154,4 +154,166 @@ flowchart TD
 
     A --> D[닫기 버튼]
 
-짜줘
+기능별 모듈 & DB 설계
+📌 기능별 모듈 구조
+1. 인증 모듈 (Authentication Module)
+
+기능
+
+회원가입 (이메일/전화번호 기반)
+
+로그인 (JWT 또는 세션 기반)
+
+비밀번호 해시/검증
+
+세부 모듈
+
+auth/register.js : 사용자 회원가입 처리
+
+auth/login.js : 로그인 처리, 토큰 발급
+
+auth/middleware.js : 인증 미들웨어 (API 접근 제어)
+
+연결 DB 테이블
+
+USER
+
+2. 모임 관리 모듈 (Event Management Module)
+
+기능
+
+모임 생성/수정/삭제
+
+모임 정보 조회
+
+모임 썸네일 및 설명 관리
+
+세부 모듈
+
+event/create.js : 모임 생성
+
+event/update.js : 모임 수정
+
+event/delete.js : 모임 삭제
+
+event/get.js : 모임 상세 조회
+
+연결 DB 테이블
+
+EVENT
+
+PARTICIPANT (모임과 참가자 연결)
+
+3. 관리자 관리 모듈 (Admin Management Module)
+
+기능
+
+모임 관리자 추가/삭제
+
+권한 부여/회수
+
+세부 모듈
+
+admin/add.js : 관리자 등록
+
+admin/remove.js : 관리자 제거
+
+admin/permissions.js : 권한 관리
+
+연결 DB 테이블
+
+USER
+
+PARTICIPANT (role = 관리자/참가자 구분)
+
+4. 참가자 관리 모듈 (Participant Management Module)
+
+기능
+
+참가자 명단 추가/수정/삭제
+
+참여 신청 링크 생성 및 처리
+
+세부 모듈
+
+participant/add.js : 참가자 수동 추가
+
+participant/update.js : 참가자 수정
+
+participant/remove.js : 참가자 삭제
+
+participant/join.js : 링크를 통한 참가 신청 처리
+
+연결 DB 테이블
+
+PARTICIPANT
+
+5. 티켓 발급/발송 모듈 (Ticket Issuance & Delivery Module)
+
+기능
+
+QR코드 티켓 발급
+
+이메일/SMS를 통한 티켓 발송
+
+중복 입장 방지 설정
+
+세부 모듈
+
+ticket/generate.js : QR코드 생성
+
+ticket/sendEmail.js : 이메일 발송
+
+ticket/sendSMS.js : SMS 발송
+
+연결 DB 테이블
+
+TICKET
+
+6. 티켓 검증 모듈 (Ticket Validation Module)
+
+기능
+
+입장 시 QR 스캔 → 참가자 확인
+
+중복 입장 체크
+
+세부 모듈
+
+validate/scan.js : QR 코드 스캔/검증
+
+validate/log.js : 입장 로그 기록
+
+연결 DB 테이블
+
+TICKET
+
+PARTICIPANT
+
+7. 통계 모듈 (Statistics Module)
+
+기능
+
+모임별 발급 티켓 수, 입장자 수 집계
+
+기간별 통계 제공
+
+세부 모듈
+
+stats/eventStats.js : 모임별 통계
+
+stats/participantStats.js : 참가자 통계
+
+연결 DB 테이블
+
+STATISTICS
+
+📌 데이터베이스 구조 (ERD 기반)
+USER 테이블
+컬럼명	타입	설명
+user_id (PK)	INT	사용자 고유 ID
+name	VARCHAR	이름
+email	VARCHAR	이메일
+phone	VARCHAR	전화번호
+password	VARCHAR	암호화된 비밀번호
+created_at	DATETIME	생성일
