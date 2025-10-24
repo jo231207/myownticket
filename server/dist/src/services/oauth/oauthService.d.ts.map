@@ -1,0 +1,1 @@
+{"version":3,"file":"oauthService.d.ts","sourceRoot":"","sources":["../../../../src/services/oauth/oauthService.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,MAAM,gBAAgB,CAAC;AAG9C,OAAO,EAAE,sBAAsB,EAAE,YAAY,EAAE,iBAAiB,EAAyB,MAAM,kBAAkB,CAAC;AAiClH,eAAO,MAAM,qBAAqB,GAChC,SAAS,sBAAsB,KAC9B,OAAO,CAAC,YAAY,CAgBtB,CAAC;AAEF,eAAO,MAAM,oBAAoB,GAAI,MAAM,iBAAiB,KAAG,YAE9D,CAAC"}
