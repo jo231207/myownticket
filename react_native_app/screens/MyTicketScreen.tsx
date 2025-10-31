@@ -12,39 +12,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import BottomNav from '../components/BottomNav';
 import { RootStackParamList } from '../App';
+import { tickets } from '../data/mockData';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'MyTicket'>;
 
-type Ticket = {
-  id: string;
-  event: string;
-  date: string;
-  place: string;
-  qrData: string;
-};
-
 export default function MyTicketScreen({ navigation }: Props) {
-  const tickets: Ticket[] = [
-    {
-      id: 'ticket-1',
-      event: '나이트 마켓 탐방',
-      date: '2025-12-01',
-      place: '부산 센텀시티',
-      qrData: 'https://google.com',
-    },
-    {
-      id: 'ticket-2',
-      event: '겨울 콘서트',
-      date: '2025-12-10',
-      place: '서울 올림픽공원',
-      qrData: 'https://google.com',
-    },
-  ];
-
-  // TODO: 서버 데이터 수신 시 일시( date ) 기준으로 정렬을 보장해야 합니다.
   const sortedTickets = useMemo(
     () => tickets.slice().sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()),
-    [tickets]
+    []
   );
   const [visibleQr, setVisibleQr] = useState<string | null>(null);
 

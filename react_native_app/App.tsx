@@ -16,7 +16,10 @@ import {
 import MeetingViewScreen from './screens/MeetingViewScreen';
 import MeetingEditScreen from './screens/MeetingEditScreen';
 import MeetingTicketSendScreen from './screens/MeetingTicketSendScreen';
+import MyMeetingsScreen from './screens/MyMeetingsScreen';
+import MyProfileScreen from './screens/MyProfileScreen';
 import MyTicketScreen from './screens/MyTicketScreen';
+import QrScannerScreen from './screens/QrScannerScreenV2';
 import SignupScreen from './screens/SignupScreen';
 
 export type RootStackParamList = {
@@ -89,8 +92,11 @@ export type RootStackParamList = {
       }
     | undefined;
   MeetingTicketSend: undefined;
+  MyMeetings: undefined;
+  MyProfile: undefined;
   MyTicket: undefined;
   Home: undefined;
+  QrScanner: undefined;
   Signup: undefined;
 };
 
@@ -111,10 +117,15 @@ export default function App() {
         <Stack.Screen name="MeetingView" component={MeetingViewScreen} />
         <Stack.Screen name="MeetingEdit" component={MeetingEditScreen} />
         <Stack.Screen name="MeetingTicketSend" component={MeetingTicketSendScreen} />
+        <Stack.Screen name="MyMeetings" component={MyMeetingsScreen} />
+        <Stack.Screen name="MyProfile" component={MyProfileScreen} />
         <Stack.Screen name="MyTicket" component={MyTicketScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="QrScanner" component={QrScannerScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+

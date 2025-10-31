@@ -1,18 +1,26 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '../App';
+﻿import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../App";
 
 interface BottomNavProps {
   navigation: NavigationProp<RootStackParamList>;
 }
 
-const NAV_ITEMS: Array<{ label: string; route: keyof RootStackParamList }> = [
-  { label: '홈', route: 'Home' },
-  { label: '새모임', route: 'MeetingCreate1' },
-  { label: '모임목록', route: 'Home' },
-  { label: '내 입장권', route: 'MyTicket' },
+type NavItem = {
+  key: string;
+  label: string;
+  icon: string;
+  route: keyof RootStackParamList;
+};
+
+const NAV_ITEMS: NavItem[] = [
+  { key: 'home', label: '?', icon: 'H', route: 'Home' },
+  { key: 'create', label: '?? ???', icon: '+', route: 'MeetingCreate1' },
+  { key: 'view', label: '?? ??', icon: 'M', route: 'MyMeetings' },
+  { key: 'tickets', label: '???', icon: 'Q', route: 'MyTicket' },
+  { key: 'profile', label: '? ??', icon: 'P', route: 'MyProfile' },
 ];
 
 export default function BottomNav({ navigation }: BottomNavProps) {
@@ -25,12 +33,13 @@ export default function BottomNav({ navigation }: BottomNavProps) {
         { paddingBottom: insets.bottom > 0 ? insets.bottom : 10 },
       ]}
     >
-      {NAV_ITEMS.map((item, index) => (
+      {NAV_ITEMS.map((item) => (
         <TouchableOpacity
-          key={item.label}
-          style={[styles.item, index === NAV_ITEMS.length - 1 && styles.lastItem]}
+          key={item.key}
+          style={styles.item}
           onPress={() => navigation.navigate(item.route)}
         >
+          <Text style={styles.itemIcon}>{item.icon}</Text>
           <Text style={styles.itemText}>{item.label}</Text>
         </TouchableOpacity>
       ))}
@@ -46,7 +55,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-around',
     paddingTop: 12,
     paddingHorizontal: 16,
     backgroundColor: '#fff',
@@ -54,14 +63,14 @@ const styles = StyleSheet.create({
     borderTopColor: '#e5e5e5',
   },
   item: {
-    paddingHorizontal: 8,
-    marginRight: 16,
+    alignItems: 'center',
   },
-  lastItem: {
-    marginRight: 0,
+  itemIcon: {
+    fontSize: 18,
+    marginBottom: 4,
   },
   itemText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
     color: '#222',
   },

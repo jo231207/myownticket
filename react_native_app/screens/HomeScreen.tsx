@@ -1,48 +1,54 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import BottomNav from '../components/BottomNav';
 import { RootStackParamList } from '../App';
+import { meetings, tickets } from '../data/mockData';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-type CreatedMeeting = {
-  id: string;
+type QuickAction = {
+  key: string;
   title: string;
-  participants: string;
-  date: string;
-  place: string;
+  description: string;
+  onPress: () => void;
 };
-
-// TODO: 실제 데이터로 대체 시 내 모임 리스트도 정렬 로직을 추가하세요.
-const createdMeetings: CreatedMeeting[] = [
-  { id: '1', title: '주말 등산 준비', participants: '2/10명', date: '2025-10-23', place: '서울 남산' },
-  { id: '2', title: '보드게임 같이해요', participants: '2/10명', date: '2025-11-02', place: '서울 홍대' },
-];
-
-const tickets = [
-  {
-    id: 't1',
-    event: '나이트 마켓 투어',
-    date: '2025-12-01',
-    place: '부산 센텀시티',
-    qrData: 'https://google.com',
-  },
-  {
-    id: 't2',
-    event: '겨울 콘서트',
-    date: '2025-12-10',
-    place: '서울 올림픽공원',
-    qrData: 'https://google.com',
-  },
-];
 
 export default function HomeScreen({ navigation }: Props) {
   const [visibleQr, setVisibleQr] = useState<string | null>(null);
 
-  const handleViewMeeting = (meeting?: CreatedMeeting) => {
+  const limitedMeetings = meetings.slice(0, 2);
+  const limitedTickets = tickets.slice(0, 2);
+
+  const quickActions = useMemo<QuickAction[]>(
+    () => [
+      {
+        key: 'meeting-view',
+        title: '모임 보기',
+        description: '모임 목록과 상세 정보를 확인해요',
+        onPress: () => navigation.navigate('MyMeetings'),
+      },
+      {
+        key: 'ticket-send',
+        title: '입장권 발송',
+        description: '참여자에게 QR 입장권을 빠르게 보내요',
+        onPress: () => navigation.navigate('MeetingTicketSend'),
+      },
+      {
+        key: 'qr-scan',
+        title: 'QR 코드 스캔',
+        description: '현장에서 바로 입장 여부를 확인해요',
+        onPress: () => navigation.navigate('QrScanner'),
+      },
+    ],
+    [navigation]
+  );
+
+  const handleViewMeeting = (meetingId?: string) => {
+    const meeting = meetings.find((item) => item.id === meetingId);
     if (!meeting) return;
+
     navigation.navigate('MeetingView', {
       meetingId: meeting.id,
       title: meeting.title,
@@ -60,66 +66,88 @@ export default function HomeScreen({ navigation }: Props) {
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>안내</Text>
-            <Text style={styles.sectionBody}>새 모임을 만들고 입장권을 한 곳에서 관리하세요.</Text>
+          <View style={[styles.section, styles.introSection]}>
+            <Text style={styles.introTitle}>환영합니다 👋</Text>
+            <Text style={styles.introBody}>
+              새로운 모임을 만들거나 참여자 관리를 빠르게 시작해 보세요.
+            </Text>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>내 모임</Text>
-            {createdMeetings.map((meeting) => (
+            <Text style={styles.sectionTitle}>빠른 작업</Text>
+            <View style={styles.quickGrid}>
+              {quickActions.map((action) => (
+                <TouchableOpacity
+                  key={action.key}
+                  style={styles.quickCard}
+                  onPress={action.onPress}
+                >
+                  <Text style={styles.quickCardTitle}>{action.title}</Text>
+                  <Text style={styles.quickCardDescription}>{action.description}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>최근 모임</Text>
+            {limitedMeetings.map((meeting) => (
               <View key={meeting.id} style={styles.meetingCard}>
                 <Text style={styles.meetingTitle}>{meeting.title}</Text>
-                <Text style={styles.meetingMeta}>참여 {meeting.participants}</Text>
+                <Text style={styles.meetingMeta}>참여 인원 {meeting.participants}</Text>
                 <Text style={styles.meetingMeta}>일시 {meeting.date}</Text>
                 <Text style={styles.meetingMeta}>장소 {meeting.place}</Text>
-                <TouchableOpacity style={styles.detailButton} onPress={() => handleViewMeeting(meeting)}>
-                  <Text style={styles.detailButtonText}>모임보기</Text>
+                <TouchableOpacity
+                  style={styles.detailButton}
+                  onPress={() => handleViewMeeting(meeting.id)}
+                >
+                  <Text style={styles.detailButtonText}>모임 보기</Text>
                 </TouchableOpacity>
               </View>
             ))}
             <TouchableOpacity
               style={styles.moreButton}
-              onPress={() => handleViewMeeting(createdMeetings[0])}
+              onPress={() => navigation.navigate('MyMeetings')}
             >
-              <Text style={styles.moreButtonText}>더보기</Text>
+              <Text style={styles.moreButtonText}>모임 전체 보기</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>내 입장권</Text>
-            {tickets.map((ticket) => (
-              <View key={ticket.id} style={styles.ticketCard}>
-                <Text style={styles.ticketTitle}>{ticket.event}</Text>
-                <Text style={styles.ticketMeta}>일시 {ticket.date}</Text>
-                <Text style={styles.ticketMeta}>장소 {ticket.place}</Text>
-                {/* 추후 링크로 대체, 일반 QR로 스캔시 어플리케이션 실행 후 HTTP 페이지에 참여자 정보 표시 후 입장 승인 거부 표시하게 할까?
-                    아니면 그냥 단순 JWT 토큰같은걸로 표시, 차단기등에서 알아서 처리하게 해야하나? */}
-                <TouchableOpacity
-                  style={styles.qrButton}
-                  onPress={() => setVisibleQr((prev) => (prev === ticket.id ? null : ticket.id))}
-                >
-                  <Text style={styles.qrButtonText}>
-                    {visibleQr === ticket.id ? 'QR코드 숨기기' : 'QR코드 보기'}
-                  </Text>
-                </TouchableOpacity>
-                {visibleQr === ticket.id ? (
-                  <Image
-                    source={{
-                      uri: `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-                        ticket.qrData
-                      )}`,
-                    }}
-                    style={styles.qrImage}
-                  />
-                ) : null}
-              </View>
-            ))}
+            <Text style={styles.sectionTitle}>발행된 입장권</Text>
+            {limitedTickets.map((ticket) => {
+              const isVisible = visibleQr === ticket.id;
+              return (
+                <View key={ticket.id} style={styles.ticketCard}>
+                  <Text style={styles.ticketTitle}>{ticket.event}</Text>
+                  <Text style={styles.ticketMeta}>일시 {ticket.date}</Text>
+                  <Text style={styles.ticketMeta}>장소 {ticket.place}</Text>
+                  <TouchableOpacity
+                    style={styles.qrButton}
+                    onPress={() => setVisibleQr((prev) => (prev === ticket.id ? null : ticket.id))}
+                  >
+                    <Text style={styles.qrButtonText}>
+                      {isVisible ? 'QR 코드 닫기' : 'QR 코드 열기'}
+                    </Text>
+                  </TouchableOpacity>
+                  {isVisible ? (
+                    <Image
+                      source={{
+                        uri: `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                          ticket.qrData
+                        )}`,
+                      }}
+                      style={styles.qrImage}
+                    />
+                  ) : null}
+                </View>
+              );
+            })}
             <TouchableOpacity
               style={styles.moreButton}
               onPress={() => navigation.navigate('MyTicket')}
             >
-              <Text style={styles.moreButtonText}>더보기</Text>
+              <Text style={styles.moreButtonText}>입장권 전체 보기</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -170,15 +198,49 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 2,
   },
+  introSection: {
+    backgroundColor: '#111827',
+  },
+  introTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#f8fafc',
+    marginBottom: 10,
+  },
+  introBody: {
+    fontSize: 14,
+    color: '#e2e8f0',
+    lineHeight: 20,
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 12,
+    marginBottom: 16,
   },
-  sectionBody: {
-    fontSize: 14,
-    color: '#444',
-    lineHeight: 20,
+  quickGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  quickCard: {
+    width: '48%',
+    backgroundColor: '#f9fafb',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  quickCardTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 6,
+  },
+  quickCardDescription: {
+    fontSize: 13,
+    color: '#4b5563',
+    lineHeight: 18,
   },
   meetingCard: {
     borderWidth: 1,

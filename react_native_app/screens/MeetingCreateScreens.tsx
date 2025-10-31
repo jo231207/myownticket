@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+﻿import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -8,17 +8,17 @@ import {
   ScrollView,
   Alert,
   TouchableOpacity,
-} from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../App';
+} from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../App";
 
-type Step1Props = NativeStackScreenProps<RootStackParamList, 'MeetingCreate1'>;
-type Step2Props = NativeStackScreenProps<RootStackParamList, 'MeetingCreate2'>;
-type Step3Props = NativeStackScreenProps<RootStackParamList, 'MeetingCreate3'>;
-type Step4Props = NativeStackScreenProps<RootStackParamList, 'MeetingCreate4'>;
-type Step5Props = NativeStackScreenProps<RootStackParamList, 'MeetingCreate5'>;
+const MAP_PLACEHOLDER_LINES = ['Map Placeholder', 'Map preview will be embedded later'];
 
-const MAP_PLACEHOLDER_LINES = ['지도 이미지', '배달앱 스타일로 대체 예정'];
+type Step1Props = NativeStackScreenProps<RootStackParamList, "MeetingCreate1">;
+type Step2Props = NativeStackScreenProps<RootStackParamList, "MeetingCreate2">;
+type Step3Props = NativeStackScreenProps<RootStackParamList, "MeetingCreate3">;
+type Step4Props = NativeStackScreenProps<RootStackParamList, "MeetingCreate4">;
+type Step5Props = NativeStackScreenProps<RootStackParamList, "MeetingCreate5">;
 
 export function MeetingCreate1Screen({ navigation, route }: Step1Props) {
   const [meetingName, setMeetingName] = useState(route.params?.meetingName ?? '');
@@ -299,21 +299,9 @@ export function MeetingCreate5Screen({ navigation, route }: Step5Props) {
 
       <View style={styles.summaryCard}>
         <SummaryRow label="이름" value={data.meetingName} onEdit={() => goEdit('MeetingCreate1')} />
-        <SummaryRow
-          label="일자"
-          value={data.meetingDate}
-          onEdit={() => goEdit('MeetingCreate2')}
-        />
-        <SummaryRow
-          label="인원"
-          value={data.headcount}
-          onEdit={() => goEdit('MeetingCreate2')}
-        />
-        <SummaryRow
-          label="장소"
-          value={data.place}
-          onEdit={() => goEdit('MeetingCreate3')}
-        />
+        <SummaryRow label="일자" value={data.meetingDate} onEdit={() => goEdit('MeetingCreate2')} />
+        <SummaryRow label="인원" value={data.headcount} onEdit={() => goEdit('MeetingCreate2')} />
+        <SummaryRow label="장소" value={data.place} onEdit={() => goEdit('MeetingCreate3')} />
         <SummaryRow
           label="설명"
           value={data.description}
@@ -478,3 +466,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+
