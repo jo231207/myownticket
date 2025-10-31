@@ -16,11 +16,11 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { key: 'home', label: '?', icon: 'H', route: 'Home' },
-  { key: 'create', label: '?? ???', icon: '+', route: 'MeetingCreate1' },
-  { key: 'view', label: '?? ??', icon: 'M', route: 'MyMeetings' },
-  { key: 'tickets', label: '???', icon: 'Q', route: 'MyTicket' },
-  { key: 'profile', label: '? ??', icon: 'P', route: 'MyProfile' },
+  { key: 'home', label: '홈', icon: '🏠', route: 'Home' },
+  { key: 'create', label: '모임 만들기', icon: '➕', route: 'MeetingCreate1' },
+  { key: 'view', label: '내 모임', icon: '📅', route: 'MyMeetings' },
+  { key: 'tickets', label: '내 티켓', icon: '🎫', route: 'MyTicket' },
+  { key: 'profile', label: '내 프로필', icon: '👤', route: 'MyProfile' },
 ];
 
 export default function BottomNav({ navigation }: BottomNavProps) {
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemIcon: {
-    fontSize: 18,
+    fontSize: 20,
     marginBottom: 4,
   },
   itemText: {
