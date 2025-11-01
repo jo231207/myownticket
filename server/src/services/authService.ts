@@ -1,5 +1,6 @@
-import { User } from '@prisma/client';
+import { ProviderType, User } from '@prisma/client';
 import { userRepository } from '../repositories/userRepository';
+import { supabaseAccountRepository } from '../repositories/supabaseAccountRepository';
 import { hashPassword, verifyPassword } from '../utils/password';
 import {
   AccessTokenPayload,
@@ -103,7 +104,11 @@ export const authenticateWithOAuth = async (
     user = await userRepository.updateProfileFromOAuth(user.id, verifiedProfile);
   }
 
-  await userRepository.upsertOAuthProvider(user.id, verifiedProfile);
+  const authProvider = await userRepository.upsertOAuthProvider(user.id, verifiedProfile);
+
+  if (providerType === ProviderType.SUPABASE) {
+    await supabaseAccountRepository.upsertFromAuthProvider(authProvider, verifiedProfile);
+  }
   const tokens = await issueTokens(user);
 
   return { user: sanitizeUser(user), tokens };

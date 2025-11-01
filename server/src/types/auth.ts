@@ -22,6 +22,10 @@ export interface OAuthProfile {
   refreshToken?: string;
   accessTokenExpiresAt?: Date;
   refreshTokenExpiresAt?: Date;
+  tokenType?: string | null;
+  scope?: string | null;
+  idToken?: string | null;
+  sessionState?: string | null;
 }
 
 export interface AuthenticatedUser extends Omit<User, 'passwordHash'> {

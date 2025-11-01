@@ -22,10 +22,17 @@ const getSupabaseServerClient = (): SupabaseClient => {
   return supabaseServerClient;
 };
 
+const toDateOptional = (seconds?: number): Date | undefined => {
+  if (!seconds || seconds <= 0) {
+    return undefined;
+  }
+  return new Date(Date.now() + seconds * 1000);
+};
+
 export const verifySupabaseCredential = async (
   payload: OAuthCredentialPayload
 ): Promise<OAuthProfile> => {
-  const { accessToken, refreshToken } = payload;
+  const { accessToken, refreshToken, idToken, expiresIn, refreshTokenExpiresIn } = payload;
 
   if (!accessToken) {
     throw new AppError('Supabase OAuth requires an accessToken', 400);
@@ -63,6 +70,20 @@ export const verifySupabaseCredential = async (
 
   if (refreshToken) {
     profile.refreshToken = refreshToken;
+  }
+
+  if (idToken) {
+    profile.idToken = idToken;
+  }
+
+  const accessExpiresAt = toDateOptional(expiresIn);
+  if (accessExpiresAt) {
+    profile.accessTokenExpiresAt = accessExpiresAt;
+  }
+
+  const refreshExpiresAt = toDateOptional(refreshTokenExpiresIn);
+  if (refreshExpiresAt) {
+    profile.refreshTokenExpiresAt = refreshExpiresAt;
   }
 
   return profile;
