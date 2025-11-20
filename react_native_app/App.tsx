@@ -24,7 +24,14 @@ import SignupScreen from './screens/SignupScreen';
 
 export type RootStackParamList = {
   Auth: undefined;
-  EmailLogin: undefined;
+  EmailLogin:
+    | {
+        email?: string;
+        name?: string;
+        phone?: string;
+        userId?: string;
+      }
+    | undefined;
   EmailSignup: undefined;
   MeetingCreate1:
     | {

@@ -1,23 +1,70 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Pressable, Alert, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
+import { supabase } from '../lib/supabase';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'EmailSignup'>;
 
 export default function EmailSignupScreen({ navigation }: Props) {
-  const [email, setEmail] = useState('email@example.com');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('md7sums@gmail.com');
+  const [password, setPassword] = useState('123456789a');
+  const [name, setName] = useState('테스트 사용자');
+  const [phone, setPhone] = useState('010-0000-0000');
   const [showTerms, setShowTerms] = useState(false);
-  const [agree, setAgree] = useState(false);
+  const [agree, setAgree] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const toggleTerms = () => setShowTerms((prev) => !prev);
   const toggleAgree = () => setAgree((prev) => !prev);
 
-  const handleSignup = () => {
-    navigation.navigate('EmailLogin');
+  const handleSignup = async () => {
+    if (loading) return;
+    if (!agree) {
+      Alert.alert('안내', '회원약관에 동의해주세요.');
+      return;
+    }
+    if (!email || !password) {
+      Alert.alert('안내', '이메일과 비밀번호를 입력해주세요.');
+      return;
+    }
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name, phone },
+        },
+      });
+      if (error) {
+        Alert.alert('회원가입 실패', error.message);
+        return;
+      }
+
+      const userId = data.user?.id;
+
+      // Try inserting to profiles table (if present and RLS permits)
+      if (userId) {
+        try {
+          await supabase.from('profiles').insert({ id: userId, email, name, phone });
+        } catch (e) {
+          // Ignore insert error silently; table or RLS may block in unconfirmed state
+        }
+      }
+
+      if (!data.session) {
+        Alert.alert('확인 필요', '가입이 완료되었습니다. 이메일 인증을 완료해주세요.');
+      } else {
+        Alert.alert('성공', '가입이 완료되었습니다.');
+      }
+
+      navigation.navigate('EmailLogin', { email, name, phone, userId: userId || undefined });
+    } catch (e: any) {
+      Alert.alert('오류', e?.message || '알 수 없는 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -81,7 +128,13 @@ export default function EmailSignupScreen({ navigation }: Props) {
         <Text style={styles.checkboxLabel}>회원약관에 동의합니다</Text>
       </Pressable>
 
-      <Button title="회원가입하기" onPress={handleSignup} />
+      <View style={{ marginTop: 8 }}>
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
+          <Button title="회원가입하기" onPress={handleSignup} />
+        )}
+      </View>
     </View>
   );
 }
